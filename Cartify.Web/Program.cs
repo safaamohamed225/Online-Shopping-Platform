@@ -1,3 +1,6 @@
+using Cartify.Web.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace Cartify.Web
 {
     public class Program
@@ -9,6 +12,12 @@ namespace Cartify.Web
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(
+                builder.Configuration.GetConnectionString("DefaultConnection")
+                )
+            );
 
             var app = builder.Build();
 
