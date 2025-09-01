@@ -332,6 +332,11 @@ dotnet test Cartify.Tests.Unit
 
   ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 👤 Author
+
+- Safaa Muhammad  
+  - [GitHub](https://github.com/safaamohamed225)  
+  - [LinkedIn](https://www.linkedin.com/in/safa-mohamed-dotnet/)  
 ## 🙏 Acknowledgments
 This project was developed individually with the support of amazing open-source tools and frameworks:
 
