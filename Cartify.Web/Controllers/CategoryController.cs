@@ -1,5 +1,6 @@
-﻿using Cartify.Web.Data;
-using Cartify.Web.Models;
+﻿
+using Cartify.DataAccess.Data;
+using Cartify.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cartify.Web.Controllers

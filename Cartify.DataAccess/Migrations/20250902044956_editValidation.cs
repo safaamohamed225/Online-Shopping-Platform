@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Cartify.Web.Migrations
+namespace Cartify.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class editValidation : Migration

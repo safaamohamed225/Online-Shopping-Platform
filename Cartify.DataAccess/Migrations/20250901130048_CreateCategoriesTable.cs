@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Cartify.Web.Migrations
+namespace Cartify.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class CreateCategoriesTable : Migration

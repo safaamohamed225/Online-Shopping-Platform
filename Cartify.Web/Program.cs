@@ -1,4 +1,4 @@
-using Cartify.Web.Data;
+using Cartify.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cartify.Web

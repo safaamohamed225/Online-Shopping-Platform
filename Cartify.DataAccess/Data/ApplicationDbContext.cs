@@ -1,7 +1,8 @@
-﻿using Cartify.Web.Models;
+﻿
+using Cartify.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cartify.Web.Data
+namespace Cartify.DataAccess.Data
 {
     public class ApplicationDbContext : DbContext
     {

@@ -1,4 +1,5 @@
-using Cartify.Web.Models;
+
+using Cartify.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

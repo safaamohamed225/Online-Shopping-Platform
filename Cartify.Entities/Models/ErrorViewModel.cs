@@ -1,4 +1,4 @@
-namespace Cartify.Web.Models
+namespace Cartify.Entities.Models
 {
     public class ErrorViewModel
     {

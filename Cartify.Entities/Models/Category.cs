@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Cartify.Web.Models
-{
+namespace Cartify.Entities.Models
+{ 
     public class Category
     {
         public int Id { get; set; }
