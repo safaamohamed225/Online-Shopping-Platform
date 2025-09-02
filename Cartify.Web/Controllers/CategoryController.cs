@@ -31,6 +31,7 @@ namespace Cartify.Web.Controllers
             {
                 _context.Categories.Add(category);
                 _context.SaveChanges();
+                TempData["Create"] ="Data has been created successfully";
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -55,6 +56,7 @@ namespace Cartify.Web.Controllers
             {
                 _context.Categories.Update(category);
                 _context.SaveChanges();
+                TempData["Update"] = "Data has been updated successfully";
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -80,6 +82,7 @@ namespace Cartify.Web.Controllers
             }
             _context.Categories.Remove(category);
             _context.SaveChanges();
+            TempData["Delete"] = "Data has been deleted successfully";
             return RedirectToAction("Index");
         }
 
