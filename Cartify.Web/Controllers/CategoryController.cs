@@ -23,7 +23,7 @@ namespace Cartify.Web.Controllers
         }
 
         [HttpPost]
-        [AutoValidateAntiforgeryToken
+        [AutoValidateAntiforgeryToken]
         public IActionResult Create(Category category)
         {
 
