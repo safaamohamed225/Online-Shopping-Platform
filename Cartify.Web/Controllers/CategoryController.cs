@@ -33,7 +33,7 @@ namespace Cartify.Web.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
-           return View(category);
+            return View(category);
         }
 
         [HttpGet]
@@ -56,6 +56,40 @@ namespace Cartify.Web.Controllers
                 _context.Categories.Update(category);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
+            }
+            return View(category);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            var category = _context.Categories.Find(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return View(category);
+        }
+        [HttpPost]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var category = _context.Categories.Find(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            _context.Categories.Remove(category);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var category = _context.Categories.Find(id);
+            if (category == null)
+            {
+                return NotFound();
             }
             return View(category);
         }
