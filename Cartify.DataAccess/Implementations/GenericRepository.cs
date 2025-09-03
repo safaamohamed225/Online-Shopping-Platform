@@ -24,7 +24,7 @@ namespace Cartify.DataAccess.Implementations
             _dbSet.Add(entity);
         }
 
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>> predicate, string? includes)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? predicate = null, string? includes = null)
         {
             IQueryable<T> query = _dbSet;
 
@@ -43,7 +43,7 @@ namespace Cartify.DataAccess.Implementations
             return query.ToList();
         }
 
-        public T Get(Expression<Func<T, bool>> predicate, string? includes)
+        public T Get(Expression<Func<T, bool>>? predicate = null, string? includes = null)
         {
             IQueryable<T> query = _dbSet;
 

@@ -1,20 +1,21 @@
 ﻿
 using Cartify.DataAccess.Data;
 using Cartify.Entities.Models;
+using Cartify.Entities.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cartify.Web.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public CategoryController(ApplicationDbContext context)
+        private readonly IUnitOfWork _unitOfWork;
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            var categories = _context.Categories.ToList();
+            var categories = _unitOfWork.Category.GetAll();
             return View(categories);
         }
         [HttpGet]
@@ -30,8 +31,8 @@ namespace Cartify.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Categories.Add(category);
-                _context.SaveChanges();
+                _unitOfWork.Category.Add(category);
+                _unitOfWork.Complete();
                 TempData["Create"] ="Data has been created successfully";
                 return RedirectToAction("Index");
             }
@@ -41,7 +42,7 @@ namespace Cartify.Web.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = _unitOfWork.Category.Get(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
@@ -55,8 +56,8 @@ namespace Cartify.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Categories.Update(category);
-                _context.SaveChanges();
+               _unitOfWork.Category.Update(category);
+                _unitOfWork.Complete();
                 TempData["Update"] = "Data has been updated successfully";
                 return RedirectToAction("Index");
             }
@@ -66,7 +67,7 @@ namespace Cartify.Web.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = _unitOfWork.Category.Get(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
@@ -76,13 +77,13 @@ namespace Cartify.Web.Controllers
         [HttpPost]
         public IActionResult DeleteConfirmed(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = _unitOfWork.Category.Get(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
             }
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
+            _unitOfWork.Category.Remove(category);
+            _unitOfWork.Complete();
             TempData["Delete"] = "Data has been deleted successfully";
             return RedirectToAction("Index");
         }
@@ -90,7 +91,7 @@ namespace Cartify.Web.Controllers
         [HttpGet]
         public IActionResult Details(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = _unitOfWork.Category.Get(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();

@@ -9,9 +9,9 @@ namespace Cartify.Entities.Repositories
 {
     public interface IGenericRepository<T> where T: class
     {
-        IEnumerable<T> GetAll(Expression<Func<T, bool>> predicate, string? includes);
+        IEnumerable<T> GetAll(Expression<Func<T, bool>>? predicate = null, string? includes = null);
 
-        T Get(Expression<Func<T, bool>> predicate, string? include);
+        T Get(Expression<Func<T, bool>>? predicate = null, string? include = null);
 
         void Add(T entity);
         void Remove(T entity);

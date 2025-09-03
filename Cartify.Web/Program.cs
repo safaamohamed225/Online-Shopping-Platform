@@ -1,4 +1,6 @@
 using Cartify.DataAccess.Data;
+using Cartify.DataAccess.Implementations;
+using Cartify.Entities.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cartify.Web
@@ -18,6 +20,8 @@ namespace Cartify.Web
                 builder.Configuration.GetConnectionString("DefaultConnection")
                 )
             );
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             var app = builder.Build();
 
