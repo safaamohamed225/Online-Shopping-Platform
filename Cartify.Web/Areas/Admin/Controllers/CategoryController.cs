@@ -1,11 +1,11 @@
-﻿
-using Cartify.DataAccess.Data;
+﻿using Cartify.DataAccess.Data;
 using Cartify.Entities.Models;
 using Cartify.Entities.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cartify.Web.Controllers
+namespace Cartify.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
