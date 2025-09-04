@@ -18,9 +18,14 @@ namespace Cartify.Web.Areas.Admin.Controllers
             _env = env;
         }
         public IActionResult Index()
+        {      
+            return View();
+        }
+
+        public IActionResult GetAll()
         {
-            var products = _unitOfWork.Product.GetAll();
-            return View(products);
+            var productList = _unitOfWork.Product.GetAll(includes: "Category");
+            return Json(new { data = productList });
         }
         [HttpGet]
         public IActionResult Create()
@@ -39,10 +44,13 @@ namespace Cartify.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ProductVM productVM, IFormFile file)
+        public IActionResult Create(ProductVM productVM, IFormFile? file)
         {
-            string rootPath = _env.WebRootPath;
-            if(rootPath != null)
+            if (ModelState.IsValid)
+            {
+                string rootPath = _env.WebRootPath;
+
+            if(file != null)
             {
                 string fileName = Guid.NewGuid().ToString();
                 var uploads = Path.Combine(rootPath, @"Images/Products");
@@ -54,13 +62,13 @@ namespace Cartify.Web.Areas.Admin.Controllers
                 productVM.Product.Image = @"/Images/Products/" + fileName + extension;
             }
 
-            if (ModelState.IsValid)
-            {
+         
                 _unitOfWork.Product.Add(productVM.Product);
                 _unitOfWork.Complete();
                 TempData["Create"] ="Data has been created successfully";
                 return RedirectToAction("Index");
             }
+
             return View(productVM);
         }
 
