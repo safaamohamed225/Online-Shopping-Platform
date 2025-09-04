@@ -1,6 +1,8 @@
 ﻿using Cartify.DataAccess.Data;
 using Cartify.Entities.Models;
 using Cartify.Entities.Repositories;
+using Cartify.Entities.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cartify.Web.Areas.Admin.Controllers
@@ -21,7 +23,16 @@ namespace Cartify.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            ProductVM productVM = new ProductVM()
+            {
+                Product = new Product(),
+                CategoryList = _unitOfWork.Category.GetAll().Select(c=> new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString()
+                })
+            };  
+            return View(productVM);
         }
 
         [HttpPost]

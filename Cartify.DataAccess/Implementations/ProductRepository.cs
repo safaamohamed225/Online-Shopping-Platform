@@ -23,6 +23,9 @@ namespace Cartify.DataAccess.Implementations
             {
                 objFromDb.Name = product.Name;
                 objFromDb.Description = product.Description;
+                objFromDb.Price = product.Price;
+                objFromDb.Image = product.Image;
+                objFromDb.CategoryId = product.CategoryId;
             }
         }
     }
