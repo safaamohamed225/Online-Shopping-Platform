@@ -25,7 +25,7 @@ namespace Cartify.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(Category category)
         {
 
@@ -51,7 +51,7 @@ namespace Cartify.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
+        [ValidateAntiForgeryToken]
         public IActionResult Edit(Category category)
         {
             if (ModelState.IsValid)
@@ -75,6 +75,7 @@ namespace Cartify.Web.Areas.Admin.Controllers
             return View(category);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
             var category = _unitOfWork.Category.Get(c => c.Id == id);

@@ -11,9 +11,11 @@ namespace Cartify.Web.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public ProductController(IUnitOfWork unitOfWork)
+        private readonly IWebHostEnvironment _env;
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment env)
         {
             _unitOfWork = unitOfWork;
+            _env = env;
         }
         public IActionResult Index()
         {
@@ -36,18 +38,30 @@ namespace Cartify.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
-        public IActionResult Create(Product product)
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(ProductVM productVM, IFormFile file)
         {
+            string rootPath = _env.WebRootPath;
+            if(rootPath != null)
+            {
+                string fileName = Guid.NewGuid().ToString();
+                var uploads = Path.Combine(rootPath, @"Images/Products");
+                var extension = Path.GetExtension(file.FileName);
+                using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                {
+                    file.CopyTo(fileStreams);
+                }
+                productVM.Product.Image = @"/Images/Products/" + fileName + extension;
+            }
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(product);
+                _unitOfWork.Product.Add(productVM.Product);
                 _unitOfWork.Complete();
                 TempData["Create"] ="Data has been created successfully";
                 return RedirectToAction("Index");
             }
-            return View(product);
+            return View(productVM);
         }
 
         [HttpGet]
@@ -62,7 +76,7 @@ namespace Cartify.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
+        [ValidateAntiForgeryToken]
         public IActionResult Edit(Product product)
         {
             if (ModelState.IsValid)
@@ -86,6 +100,7 @@ namespace Cartify.Web.Areas.Admin.Controllers
             return View(product);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
             var product = _unitOfWork.Product.Get(c => c.Id == id);
