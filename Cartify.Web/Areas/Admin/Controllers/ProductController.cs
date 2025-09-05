@@ -129,35 +129,44 @@ namespace Cartify.Web.Areas.Admin.Controllers
             return View(productVM.Product);
         }
 
-        [HttpGet]
+        //[HttpGet]
+        //public IActionResult Delete(int id)
+        //{
+        //    var product = _unitOfWork.Product.Get(c => c.Id == id);
+        //    if (product == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(product);
+        //}
+        [HttpDelete]
+        //[ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
             var product = _unitOfWork.Product.Get(c => c.Id == id);
             if (product == null)
             {
-                return NotFound();
+                return Json( new{ success = false, message = "Error while deleting"});
             }
-            return View(product);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var product = _unitOfWork.Product.Get(c => c.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+
             _unitOfWork.Product.Remove(product);
+            if (product.Image != null)
+            {
+                string rootPath = _env.WebRootPath;
+                var oldImagePath = Path.Combine(rootPath, product.Image.TrimStart('/'));
+                if (System.IO.File.Exists(oldImagePath))
+                {
+                    System.IO.File.Delete(oldImagePath);
+                }
+            }  
             _unitOfWork.Complete();
-            TempData["Delete"] = "Data has been deleted successfully";
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Delete Successful" });          
         }
 
         [HttpGet]
         public IActionResult Details(int id)
         {
-            var product = _unitOfWork.Product.Get(c => c.Id == id);
+            var product = _unitOfWork.Product.Get(c => c.Id == id, include: "Category");
             if (product == null)
             {
                 return NotFound();
