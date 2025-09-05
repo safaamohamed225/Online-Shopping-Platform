@@ -95,16 +95,38 @@ namespace Cartify.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Product product)
+        public IActionResult Edit(ProductVM productVM, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
-               _unitOfWork.Product.Update(product);
+                string rootPath = _env.WebRootPath;
+
+                if (file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString();
+                    var uploads = Path.Combine(rootPath, @"Images/Products");
+                    var extension = Path.GetExtension(file.FileName);
+
+                    if(productVM.Product.Image != null)
+                    {
+                        var oldImagePath = Path.Combine(rootPath, productVM.Product.Image.TrimStart('/'));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+                    using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                    {
+                        file.CopyTo(fileStreams);
+                    }
+                    productVM.Product.Image = @"/Images/Products/" + fileName + extension;
+                }
+                _unitOfWork.Product.Update(productVM.Product);
                 _unitOfWork.Complete();
                 TempData["Update"] = "Data has been updated successfully";
                 return RedirectToAction("Index");
             }
-            return View(product);
+            return View(productVM.Product);
         }
 
         [HttpGet]
