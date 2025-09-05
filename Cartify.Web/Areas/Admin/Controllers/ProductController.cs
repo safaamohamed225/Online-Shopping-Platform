@@ -80,7 +80,17 @@ namespace Cartify.Web.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            return View(product);
+
+            ProductVM productVM = new ProductVM()
+            {
+                Product = product,
+                CategoryList = _unitOfWork.Category.GetAll().Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString()
+                })
+            };
+            return View(productVM);
         }
 
         [HttpPost]
