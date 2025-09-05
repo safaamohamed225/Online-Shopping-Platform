@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductVM>
+﻿@model IEnumerable<Product>
 
 
 @{
@@ -11,14 +11,14 @@
     <a asp-action="Create" asp-controller="Product" class="btn btn-success">Create New Product</a>
 </div>
 <br />
-<table class="table table-hover" width="100%" id="DT_load">
+<table id="DT_load" class="table table-hover" width="100%">
     <thead>
     <tr>
-        <td>Name</td>
-        <td>Description</td>
-        <td>Price</td>
-        <td>Category</td>
-        <td>Actions</td>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Category</th>
+        <th>Actions</th>
     </tr>
     </thead>
 </table>
