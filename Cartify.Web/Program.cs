@@ -32,13 +32,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
-
-//Area Route
-//app.MapControllerRoute(
-//    name: "Admin",
-//    pattern: "Admin/{controller=Category}/{action=Index}/{id?}",
-//    defaults: new { area = "Admin" });
+app.MapRazorPages();
 
 //Default Route
 app.MapControllerRoute(
