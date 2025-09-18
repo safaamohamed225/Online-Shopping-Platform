@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Cartify.DataAccess\Cartify.DataAccess.csproj" />
     <ProjectReference Include="..\Cartify.Entities\Cartify.Entities.csproj" />
+    <ProjectReference Include="..\Cartify.Utilities\Cartify.Utilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>
