@@ -75,6 +75,7 @@ namespace Cartify.Web.Areas.Identity.Pages.Account
 
             [Display(Name = "Address")]
             public string Address { get; set; }
+            public string PhoneNumber { get; set; }
         }
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -93,7 +94,7 @@ namespace Cartify.Web.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { Name = Input.Name, UserName = Input.Email, Email = Input.Email, City = Input.City, Address = Input.Address };
+                var user = new ApplicationUser { Name = Input.Name, UserName = Input.Email, Email = Input.Email, City = Input.City, Address = Input.Address, PhoneNumber = Input.PhoneNumber };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {                 
