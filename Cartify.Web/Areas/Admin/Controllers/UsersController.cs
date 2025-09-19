@@ -24,5 +24,26 @@ namespace Cartify.Web.Areas.Admin.Controllers
             var users = _context.ApplicationUsers.Where(x => x.Id != userId).ToList();
             return View(users);
         }
+
+        public IActionResult LockUnLock(string? id)
+        {
+            var user = _context.ApplicationUsers.FirstOrDefault(x => x.Id == id);
+            if(user ==null)
+            {
+                return NotFound();
+            }
+            if(user.LockoutEnd != null && user.LockoutEnd > DateTime.Now)
+            {
+                //user is locked and we need to unlock them
+                user.LockoutEnd = DateTime.Now;
+            }
+            else
+            {
+                user.LockoutEnd = DateTime.Now.AddYears(1);
+            }
+
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index), new { area = "Admin"});
+        }
     }
 }
