@@ -1,5 +1,5 @@
-﻿using Cartify.Entities.Repositories;
-using Cartify.Entities.ViewModels;
+﻿using Cartify.Entities.Models;
+using Cartify.Entities.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cartify.Web.Areas.Customer.Controllers
