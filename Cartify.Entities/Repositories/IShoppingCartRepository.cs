@@ -9,5 +9,7 @@ namespace Cartify.Entities.Repositories
 {
     public interface IShoppingCartRepository : IGenericRepository<ShoppingCart>
     {
+        int IncreseCount(ShoppingCart cart, int count);
+        int DecreaseCount(ShoppingCart cart, int count);
     }
 }

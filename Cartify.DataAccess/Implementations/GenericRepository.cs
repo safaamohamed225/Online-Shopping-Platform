@@ -23,7 +23,6 @@ namespace Cartify.DataAccess.Implementations
         {
             _dbSet.Add(entity);
         }
-
         public IEnumerable<T> GetAll(Expression<Func<T, bool>>? predicate = null, string? includes = null)
         {
             IQueryable<T> query = _dbSet;
@@ -39,10 +38,8 @@ namespace Cartify.DataAccess.Implementations
                     query = query.Include(item);
                 }
             }
-
             return query.ToList();
         }
-
         public T Get(Expression<Func<T, bool>>? predicate = null, string? includes = null)
         {
             IQueryable<T> query = _dbSet;
@@ -58,15 +55,13 @@ namespace Cartify.DataAccess.Implementations
                     query = query.Include(item);
                 }
             }
-
-            return query.SingleOrDefault()!;
+            return query.FirstOrDefault()!;
         }
 
         public void Remove(T entity)
         {
             _dbSet.Remove(entity);
         }
-
         public void RemoveRange(IEnumerable<T> entities)
         {
             _dbSet.RemoveRange(entities);

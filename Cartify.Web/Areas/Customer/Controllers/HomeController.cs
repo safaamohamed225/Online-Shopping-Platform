@@ -46,14 +46,23 @@ namespace Cartify.Web.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity!;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            ShoppingCart cart = new ShoppingCart()
-            {
-                ProductId = vm.ProductId,
-                Count = vm.Count,
-                ApplicationUserId = claim.Value
-            };
+            ShoppingCart cartObj = _unitOfWork.ShoppingCart.Get(
+                c => c.ApplicationUserId == claim.Value && c.ProductId == vm.ProductId);
 
-            _unitOfWork.ShoppingCart.Add(cart);
+            if(cartObj != null)
+            {
+                _unitOfWork.ShoppingCart.IncreseCount(cartObj, vm.Count);
+            }
+            else
+            {
+                ShoppingCart cart = new ShoppingCart()
+                {
+                    ProductId = vm.ProductId,
+                    Count = vm.Count,
+                    ApplicationUserId = claim.Value
+                };
+                _unitOfWork.ShoppingCart.Add(cart);    
+            }
             _unitOfWork.Complete();
 
             return RedirectToAction(nameof(Index));

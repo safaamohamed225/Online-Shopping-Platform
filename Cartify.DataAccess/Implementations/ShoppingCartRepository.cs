@@ -16,5 +16,15 @@ namespace Cartify.DataAccess.Implementations
         {
             _context = context;
         }
+        public int IncreseCount(ShoppingCart cart, int count)
+        {
+            cart.Count += count;
+            return cart.Count;
+        }
+        public int DecreaseCount(ShoppingCart cart, int count)
+        {
+            cart.Count -= count;
+            return cart.Count;
+        }
     }
 }
