@@ -99,7 +99,20 @@ namespace Cartify.Web.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {                 
                     _logger.LogInformation("User created a new account with password.");
-                    await _userManager.AddToRoleAsync(user, SD.CustomerRole);
+
+                    var role = HttpContext.Request.Form["RoleRadio"].ToString();
+
+                    if(String.IsNullOrEmpty(role))
+                    {
+                        await _userManager.AddToRoleAsync(user, SD.CustomerRole);
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, role);
+                    }
+                    return RedirectToAction("Index", "Users", new { area = "Admin" });
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -118,8 +131,8 @@ namespace Cartify.Web.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        //await _signInManager.SignInAsync(user, isPersistent: false);
+                        //return LocalRedirect(returnUrl);
                     }
                 }
                 foreach (var error in result.Errors)
