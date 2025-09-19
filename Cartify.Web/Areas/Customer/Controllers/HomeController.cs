@@ -1,6 +1,9 @@
 ﻿using Cartify.Entities.Models;
 using Cartify.Entities.Repositories;
+using Cartify.Entities.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Cartify.Web.Areas.Customer.Controllers
 {
@@ -24,17 +27,36 @@ namespace Cartify.Web.Areas.Customer.Controllers
             // Check if product exists
             if (product == null)
             {
-                return NotFound(); // Returns 404 page
-                                   // Or redirect: return RedirectToAction("Index");
+                return NotFound(); 
             }
-
-            ShoppingCart cart = new ShoppingCart()
+            AddToCartVM cart = new AddToCartVM()
             {
-                Product = product,
-                Count = 1
+                ProductId = id,
+                Count = 1,
+                Product = product
             };
 
             return View(cart);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public IActionResult Details(AddToCartVM vm)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity!;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            ShoppingCart cart = new ShoppingCart()
+            {
+                ProductId = vm.ProductId,
+                Count = vm.Count,
+                ApplicationUserId = claim.Value
+            };
+
+            _unitOfWork.ShoppingCart.Add(cart);
+            _unitOfWork.Complete();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
