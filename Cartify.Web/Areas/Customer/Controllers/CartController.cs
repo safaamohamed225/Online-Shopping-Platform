@@ -31,5 +31,34 @@ namespace Cartify.Web.Areas.Customer.Controllers
             }
             return View(CartVM);
         }
+        public IActionResult Plus(int cartId)
+        {
+            var cart = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
+            _unitOfWork.ShoppingCart.IncreseCount(cart, 1);
+            _unitOfWork.Complete();
+            return RedirectToAction(nameof(Index));
+        }
+        public IActionResult Minus(int cartId)
+        {
+            var cart = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
+            if(cart.Count <= 1)
+            {
+                _unitOfWork.ShoppingCart.Remove(cart);
+            }
+            else
+            {
+                _unitOfWork.ShoppingCart.DecreaseCount(cart, 1);
+            }
+            _unitOfWork.Complete();
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Remove(int cartId)
+        {
+            var cart = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
+            _unitOfWork.ShoppingCart.Remove(cart);
+            _unitOfWork.Complete();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
