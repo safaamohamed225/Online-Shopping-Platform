@@ -16,12 +16,18 @@ namespace Cartify.DataAccess.Implementations
 
         public IShoppingCartRepository ShoppingCart { get; private set; }
 
+        public IOrderHeaderRepository OrderHeader { get; private set; }
+
+        public IOrderDetailRepository OrderDetail { get; private set; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Category = new CategoryRepository(_context);
             Product = new ProductRepository(_context);
             ShoppingCart = new ShoppingCartRepository(_context);
+            OrderHeader = new OrderHeaderRepositor(_context);
+            OrderDetail = new OrderDetailRepository(_context);
         }
 
         public int Complete()
