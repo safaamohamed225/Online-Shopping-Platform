@@ -1,4 +1,6 @@
 ﻿@model ShoppingCartVM
+@using Microsoft.Extensions.Options
+@inject IOptions<Cartify.Utilities.StripeData> Stripe 
 <!Doctype html>
 <html lang="en">
     <head>
@@ -11,9 +13,6 @@
     <!-- App favicon -->
     <link rel="shortcut icon" href="~/images/favicon.ico">
     <!-- App css -->
-    @* <link href="~/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/css/app.min.css" rel="stylesheet" type="text/css" id="light-style" />
-    <link href="~/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style" /> *@
     <link href="~/css/summary.css" rel="stylesheet" />
     </head>
 <body class="loading" data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
@@ -42,26 +41,30 @@
                                                     <div class="col-lg-4">
                                                         <div class="mb-3">
                                                             <label class="form-label" for="billing-name">Name</label>
-                                                            <input type="text" class="form-control" id="billing-name" placeholder="Enter name" value="@Model.OrderHeader.ApplicationUser.Name">
+                                                            <input asp-for="OrderHeader.Name"  type="text" class="form-control" id="billing-name" placeholder="Enter name">
+                                                                <span asp-validation-for="OrderHeader.Name" class="text-danger"></span>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <div class="mb-3">
                                                             <label class="form-label" for="billing-email-address">Email Address</label>
-                                                            <input type="email" class="form-control" id="billing-email-address" placeholder="Enter email" value="@Model.OrderHeader.ApplicationUser.Email">
+                                                            <input asp-for="OrderHeader.ApplicationUser.Email" type="email" class="form-control" id="billing-email-address" placeholder="Enter email">
+                                                                <span asp-validation-for="OrderHeader.ApplicationUser.Email" class="text-danger"></span>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <div class="mb-3">
                                                             <label class="form-label" for="billing-phone">Phone</label>
-                                                            <input type="text" class="form-control" id="billing-phone" placeholder="Enter Phone no." value="@Model.OrderHeader.ApplicationUser.PhoneNumber">
+                                                            <input asp-for="OrderHeader.PhoneNumber" type="text" class="form-control" id="billing-phone" placeholder="Enter Phone no.">
+                                                                <span asp-validation-for="OrderHeader.PhoneNumber" class="text-danger"></span>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="mb-3">
                                                     <label class="form-label" for="billing-address">Address</label>
-                                                    <textarea class="form-control" id="billing-address" rows="3" placeholder="Enter full address" value ="@Model.OrderHeader.ApplicationUser.Address"></textarea>
+                                                    <textarea  asp-for="OrderHeader.Address" class="form-control" id="billing-address" rows="3" placeholder="Enter full address"></textarea>
+                                                        <span asp-validation-for="OrderHeader.Address" class="text-danger"></span>
                                                 </div>
 
                                                 <div class="row">
