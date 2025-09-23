@@ -11,5 +11,9 @@ namespace Cartify.Entities.ViewModels
     {
         public IEnumerable<ShoppingCart> CartsList { get; set; }
         public decimal CartTotal { get; set; }
+
+        public OrderHeader OrderHeader { get; set; }
+
+        public decimal DiscountTotal { get; set; } = 0;
     }
 }

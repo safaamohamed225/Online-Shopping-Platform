@@ -17,6 +17,8 @@ namespace Cartify.Entities.Models
         public DateTime OrderDate { get; set; }
         public DateTime ShippingDate { get; set; }
         public decimal OrderTotal { get; set; }
+        public decimal TotalPrice { get; set; }
+
         public string? OrderStatus { get; set; }
         public string? PaymentStatus { get; set; }
         public string? TrackingNumber { get; set; }
@@ -29,6 +31,8 @@ namespace Cartify.Entities.Models
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
+        public string PostalCode { get; set; }
+        public string? Country { get; set; }
 
     }
 }

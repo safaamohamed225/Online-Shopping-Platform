@@ -1,8 +1,12 @@
-﻿using Cartify.Entities.Repositories;
+﻿using Cartify.Entities.Models;
+using Cartify.Entities.Repositories;
 using Cartify.Entities.ViewModels;
+using Cartify.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 using System.Security.Claims;
+using Stripe;
 
 namespace Cartify.Web.Areas.Customer.Controllers
 {
@@ -61,9 +65,125 @@ namespace Cartify.Web.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public IActionResult Summary()
-        { 
-            return View();
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity!;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            CartVM = new ShoppingCartVM()
+            {
+                CartsList = _unitOfWork.ShoppingCart.GetAll(
+                   u => u.ApplicationUserId == claim.Value,
+                   includes: "Product"
+               ),
+                OrderHeader = new OrderHeader()
+            };
+
+
+            CartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == claim.Value);
+
+            CartVM.OrderHeader.Name = CartVM.OrderHeader.ApplicationUser.Name;
+            CartVM.OrderHeader.PhoneNumber = CartVM.OrderHeader.ApplicationUser.PhoneNumber;
+            CartVM.OrderHeader.Address = CartVM.OrderHeader.ApplicationUser.Address;
+            CartVM.OrderHeader.City = CartVM.OrderHeader.ApplicationUser.City;
+            CartVM.OrderHeader.PostalCode = CartVM.OrderHeader.ApplicationUser.PostalCode;
+            CartVM.OrderHeader.Country = CartVM.OrderHeader.ApplicationUser.Country;
+            foreach (var cart in CartVM.CartsList)
+            {
+                CartVM.OrderHeader.TotalPrice += (cart.Product.Price * cart.Count);
+            }
+            return View(CartVM);
+        }
+        [HttpPost("summary")]
+        public IActionResult PostSummary()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity!;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            CartVM.CartsList = _unitOfWork.ShoppingCart.GetAll(
+                u => u.ApplicationUserId == claim.Value,
+                includes: "Product");
+
+            CartVM.OrderHeader.OrderStatus = SD.Pending;
+            CartVM.OrderHeader.PaymentStatus = SD.Pending;
+            CartVM.OrderHeader.OrderDate = DateTime.Now;
+            CartVM.OrderHeader.ApplicationUserId = claim.Value;
+
+            foreach (var cart in CartVM.CartsList)
+            {
+                CartVM.OrderHeader.TotalPrice += (cart.Product.Price * cart.Count);
+            }
+
+            _unitOfWork.OrderHeader.Add(CartVM.OrderHeader);
+            _unitOfWork.Complete();
+
+            foreach (var cart in CartVM.CartsList)
+            {
+                OrderDetail orderDetail = new OrderDetail()
+                {
+                    ProductId = cart.ProductId,
+                    OrderId = CartVM.OrderHeader.Id,
+                    Price = cart.Product.Price,
+                    Count = cart.Count
+                };
+                _unitOfWork.OrderDetail.Add(orderDetail);
+            }
+            _unitOfWork.Complete();
+
+            var domain = "https://localhost:5199/";
+            var options = new SessionCreateOptions
+            {
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={CartVM.OrderHeader.Id}",
+                CancelUrl = domain + "customer/cart/index",
+            };
+
+            foreach (var item in CartVM.CartsList)
+            {
+                var sessionLineItem = new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = (long)(item.Product.Price * 100),
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Product.Name,
+                        },
+                    },
+                    Quantity = item.Count,
+                };
+                options.LineItems.Add(sessionLineItem);
+            }
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            CartVM.OrderHeader.SessionId = session.Id;
+            _unitOfWork.OrderHeader.Update(CartVM.OrderHeader);
+            _unitOfWork.Complete();
+
+            Response.Headers.Add("Location", session.Url);
+            return new StatusCodeResult(303);
+        }
+        public IActionResult OrderConfirmation(int id)
+        {
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id);
+            var service = new SessionService();
+            Session session = service.Get(orderHeader.SessionId!);
+            //check the stripe status
+            if (session.PaymentStatus.ToLower() == "paid")
+            {
+                _unitOfWork.OrderHeader.UpdateStatus(id, SD.Approve, SD.Approve);
+                orderHeader.PaymentIntentId = session.PaymentIntentId;
+                _unitOfWork.Complete();
+            }
+            List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+            _unitOfWork.Complete();
+            return View(id);
         }
     }
 }
