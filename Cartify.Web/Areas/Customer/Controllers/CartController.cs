@@ -60,5 +60,10 @@ namespace Cartify.Web.Areas.Customer.Controllers
             _unitOfWork.Complete();
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Summary()
+        { 
+            return View();
+        }
     }
 }
