@@ -42,26 +42,26 @@
                                                     <div class="col-lg-4">
                                                         <div class="mb-3">
                                                             <label class="form-label" for="billing-name">Name</label>
-                                                            <input type="text" class="form-control" id="billing-name" placeholder="Enter name">
+                                                            <input type="text" class="form-control" id="billing-name" placeholder="Enter name" value="@Model.OrderHeader.ApplicationUser.Name">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <div class="mb-3">
                                                             <label class="form-label" for="billing-email-address">Email Address</label>
-                                                            <input type="email" class="form-control" id="billing-email-address" placeholder="Enter email">
+                                                            <input type="email" class="form-control" id="billing-email-address" placeholder="Enter email" value="@Model.OrderHeader.ApplicationUser.Email">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <div class="mb-3">
                                                             <label class="form-label" for="billing-phone">Phone</label>
-                                                            <input type="text" class="form-control" id="billing-phone" placeholder="Enter Phone no.">
+                                                            <input type="text" class="form-control" id="billing-phone" placeholder="Enter Phone no." value="@Model.OrderHeader.ApplicationUser.PhoneNumber">
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="mb-3">
                                                     <label class="form-label" for="billing-address">Address</label>
-                                                    <textarea class="form-control" id="billing-address" rows="3" placeholder="Enter full address"></textarea>
+                                                    <textarea class="form-control" id="billing-address" rows="3" placeholder="Enter full address" value ="@Model.OrderHeader.ApplicationUser.Address"></textarea>
                                                 </div>
 
                                                 <div class="row">
@@ -70,6 +70,7 @@
                                                             <label class="form-label">Country</label>
                                                             <select class="form-control form-select" title="Country">
                                                                 <option value="0">Select Country</option>
+                                                                <option value="EG">Egypt</option>
                                                                 <option value="AF">Afghanistan</option>
                                                                 <option value="AL">Albania</option>
                                                                 <option value="DZ">Algeria</option>
@@ -123,13 +124,13 @@
 
             <div class="row my-4">
                 <div class="col">
-                    <a href="ecommerce-products.html" class="btn btn-link text-muted">
+                        <a href="Areas/Customer/Home/Index" class="btn btn-link text-muted">
                         <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
                     </a>
                 </div> <!-- end col -->
                 <div class="col">
                     <div class="text-end mt-2 mt-sm-0">
-                        <a href="#" class="btn btn-success" type="submit">
+                        <a href="Areas/Customer/Home/Index" class="btn btn-success" type="submit">
                             <i class="mdi mdi-cart-outline me-1"></i> Procced
                         </a>
                     </div>
