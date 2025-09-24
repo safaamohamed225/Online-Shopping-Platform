@@ -110,6 +110,16 @@ namespace Cartify.Web.Areas.Customer.Controllers
             shoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
             shoppingCartVM.OrderHeader.ApplicationUserId = claim.Value;
 
+            var applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == claim.Value);
+
+            shoppingCartVM.OrderHeader.Name ??= applicationUser.Name;
+            shoppingCartVM.OrderHeader.PhoneNumber ??= applicationUser.PhoneNumber;
+            shoppingCartVM.OrderHeader.Address ??= applicationUser.Address;
+            shoppingCartVM.OrderHeader.City ??= applicationUser.City;
+            shoppingCartVM.OrderHeader.PostalCode ??= applicationUser.PostalCode;
+            shoppingCartVM.OrderHeader.Country ??= applicationUser.Country;
+
+
             foreach (var cart in shoppingCartVM.CartsList)
             {
                 shoppingCartVM.OrderHeader.TotalPrice += (cart.Product.Price * cart.Count);
@@ -166,8 +176,9 @@ namespace Cartify.Web.Areas.Customer.Controllers
             CartVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;
             _unitOfWork.Complete();
 
-            Response.Headers.Add("Location", session.Url);
-            return new StatusCodeResult(303);
+            //Response.Headers.Add("Location", session.Url);
+            //return new StatusCodeResult(303);
+            return Redirect(session.Url);
         }
         public IActionResult OrderConfirmation(int id)
         {
