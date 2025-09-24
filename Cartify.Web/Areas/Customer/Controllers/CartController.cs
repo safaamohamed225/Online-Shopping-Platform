@@ -137,9 +137,9 @@ namespace Cartify.Web.Areas.Customer.Controllers
                     Price = cart.Product.Price,
                     Count = cart.Count
                 };
-                _unitOfWork.OrderDetail.Add(orderDetail);
-                _unitOfWork.Complete();
+                _unitOfWork.OrderDetail.Add(orderDetail);     
             }
+            _unitOfWork.Complete();
 
             var domain = "https://localhost:7081/";
             var options = new SessionCreateOptions
@@ -171,29 +171,39 @@ namespace Cartify.Web.Areas.Customer.Controllers
             var service = new SessionService();
             Session session = service.Create(options);
 
-            CartVM.OrderHeader.SessionId = session.Id;
+            shoppingCartVM.OrderHeader.SessionId = session.Id;
             _unitOfWork.OrderHeader.Update(shoppingCartVM.OrderHeader);
-            CartVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;
+            shoppingCartVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;
             _unitOfWork.Complete();
 
-            //Response.Headers.Add("Location", session.Url);
-            //return new StatusCodeResult(303);
-            return Redirect(session.Url);
+            Response.Headers.Add("Location", session.Url);
+            return new StatusCodeResult(303);
+            //return Redirect(session.Url);
         }
         public IActionResult OrderConfirmation(int id)
         {
-            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id);
+            var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id);
+
             var service = new SessionService();
-            Session session = service.Get(orderHeader.SessionId!);
-            if (session.PaymentStatus.ToLower() == "paid")
+            var session = service.Get(orderHeader.SessionId!);
+
+            if (session.PaymentStatus.Equals("paid", StringComparison.OrdinalIgnoreCase))
             {
+                // Update order status
                 _unitOfWork.OrderHeader.UpdateStatus(id, SD.Approve, SD.Approve);
                 orderHeader.PaymentIntentId = session.PaymentIntentId;
+
+                // Clear shopping cart
+                var shoppingCarts = _unitOfWork.ShoppingCart
+                    .GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId)
+                    .ToList();
+
+                _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+
+                // Save all changes
                 _unitOfWork.Complete();
             }
-            List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
-            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
-            _unitOfWork.Complete();
+
             return View(id);
         }
     }

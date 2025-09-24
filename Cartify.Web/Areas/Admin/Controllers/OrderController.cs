@@ -1,4 +1,6 @@
-﻿using Cartify.Entities.Repositories;
+﻿using Cartify.Entities.Models;
+using Cartify.Entities.Repositories;
+using Cartify.Entities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cartify.Web.Areas.Admin.Controllers
@@ -16,12 +18,26 @@ namespace Cartify.Web.Areas.Admin.Controllers
             return View();
         }
 
+        [HttpGet]
         public IActionResult GetData()
         {
-            IEnumerable<Entities.Models.OrderHeader> objOrderHeaders 
+            IEnumerable<OrderHeader> objOrderHeaders 
                 = _unitOfWork.OrderHeader.GetAll(includes: "ApplicationUser");
 
             return Json(new { data = objOrderHeaders });
+        }
+
+        [HttpGet]
+        public IActionResult Details(int orderid)
+        {
+            OrderVM orderVM = new()
+            {
+                OrderHeader = _unitOfWork.OrderHeader.Get(
+                    u => u.Id == orderid, include: "ApplicationUser"),
+                OrderDetails = _unitOfWork.OrderDetail.GetAll(
+                    u => u.OrderId == orderid, includes: "Product")
+            };
+            return View(orderVM);   
         }
     }
 }
