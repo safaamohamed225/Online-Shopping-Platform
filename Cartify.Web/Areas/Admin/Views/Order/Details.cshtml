@@ -1,0 +1,112 @@
+﻿@model OrderVM
+
+@{
+    ViewData["Title"] = "Order Details";
+    Layout = "~/Views/Shared/Dashboard.cshtml";
+}
+
+<div class="container">
+    <div class="row my-1">
+        <div class="col-3">Name</div>
+        <div class="col-9">
+            <input asp-for="OrderHeader.Name" type="text" class="form-control" />
+            <span asp-validation-for="OrderHeader.Name" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-3">Phone</div>
+        <div class="col-9">
+            <input asp-for="OrderHeader.PhoneNumber" type="tel" class="form-control" />
+            <span asp-validation-for="OrderHeader.PhoneNumber" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-3">Address</div>
+        <div class="col-9">
+            <input asp-for="OrderHeader.Address" type="text" class="form-control" />
+            <span asp-validation-for="OrderHeader.Address" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-3">City</div>
+        <div class="col-9">
+            <input asp-for="OrderHeader.City" type="text" class="form-control" />
+            <span asp-validation-for="OrderHeader.City" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-3">Email</div>
+        <div class="col-9">
+            <input asp-for="OrderHeader.ApplicationUser.Email" type="email" class="form-control" />
+            <span asp-validation-for="OrderHeader.ApplicationUser.Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-3">Order Date</div>
+        <div class="col-9">
+            <input value="@Model.OrderHeader.OrderDate.ToShortDateString()" type="datetime-local" class="form-control" />
+            <span asp-validation-for="OrderHeader.OrderDate" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-3">Carrier</div>
+        <div class="col-9">
+            <input asp-for="OrderHeader.Carrier" type="text" class="form-control" />
+            <span asp-validation-for="OrderHeader.Carrier" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-3">Tracking Number</div>
+        <div class="col-9">
+            <input asp-for="OrderHeader.TrackingNumber" type="text" class="form-control" />
+            <span asp-validation-for="OrderHeader.TrackingNumber" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-3">Shipping Date</div>
+        <div class="col-9">
+            <input value="@Model.OrderHeader.ShippingDate.ToShortDateString()" type="date" class="form-control" />
+            <span asp-validation-for="OrderHeader.ShippingDate" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-3">Session Id</div>
+        <div class="col-9">
+            <input asp-for="OrderHeader.SessionId" readonly type="text" class="form-control" />
+            <span asp-validation-for="OrderHeader.SessionId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row my-1">
+        <div class="col-3">Payment Intent Id</div>
+        <div class="col-9">
+            <input asp-for="OrderHeader.PaymentIntentId" type="text" class="form-control" />
+            <span asp-validation-for="OrderHeader.PaymentIntentId" class="text-danger"></span>
+            </div>
+      </div>
+    <div class="row my-1">
+        <div class="col-3">Payment Date</div>
+        <div class="col-9">
+            <input value="@Model.OrderHeader.PaymentDate.ToShortDateString()" type="text" class="form-control" />
+            <span asp-validation-for="OrderHeader.PaymentDate" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col-3">Payment Status</div>
+        <div class="col-9">
+            <input asp-for="OrderHeader.PaymentStatus" type="text" class="form-control" />
+            <span asp-validation-for="OrderHeader.PaymentStatus" class="text-danger"></span>
+        </div>
+    </div>
+    <input type="submit" class="btn-btn-primary form-control my-1" value="Update Pickup Details"/>
+
+</div>

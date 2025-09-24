@@ -173,12 +173,11 @@ namespace Cartify.Web.Areas.Customer.Controllers
 
             shoppingCartVM.OrderHeader.SessionId = session.Id;
             _unitOfWork.OrderHeader.Update(shoppingCartVM.OrderHeader);
-            shoppingCartVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;
+      
             _unitOfWork.Complete();
 
             Response.Headers.Add("Location", session.Url);
             return new StatusCodeResult(303);
-            //return Redirect(session.Url);
         }
         public IActionResult OrderConfirmation(int id)
         {
