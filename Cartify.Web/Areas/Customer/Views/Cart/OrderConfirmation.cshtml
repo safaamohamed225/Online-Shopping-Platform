@@ -1,0 +1,13 @@
+﻿@model int
+
+<div class="container row">
+    <div class="col-12">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Thank You for Your Order!</h1>
+            <p class="lead">Your order number is <strong>@Model</strong>.</p>
+            <hr class="my-4">
+            <p>We appreciate your business and hope you enjoy your purchase.</p>
+            <a class="btn btn-primary btn-lg" href="@Url.Action("Index", "Home", new { area = "" })" role="button">Continue Shopping</a>
+        </div>
+    </div>
+</div>

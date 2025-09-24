@@ -96,51 +96,51 @@ namespace Cartify.Web.Areas.Customer.Controllers
             return View(CartVM);
         }
         [HttpPost("summary")]
-        public IActionResult PostSummary()
+        [ValidateAntiForgeryToken]
+        public IActionResult PostSummary(ShoppingCartVM shoppingCartVM)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity!;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            CartVM.CartsList = _unitOfWork.ShoppingCart.GetAll(
-                u => u.ApplicationUserId == claim.Value,
-                includes: "Product");
+            shoppingCartVM.CartsList = _unitOfWork.ShoppingCart.GetAll(
+                u => u.ApplicationUserId == claim.Value, includes: "Product");
 
-            CartVM.OrderHeader.OrderStatus = SD.Pending;
-            CartVM.OrderHeader.PaymentStatus = SD.Pending;
-            CartVM.OrderHeader.OrderDate = DateTime.Now;
-            CartVM.OrderHeader.ApplicationUserId = claim.Value;
+            shoppingCartVM.OrderHeader.OrderStatus = SD.Pending;
+            shoppingCartVM.OrderHeader.PaymentStatus = SD.Pending;
+            shoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
+            shoppingCartVM.OrderHeader.ApplicationUserId = claim.Value;
 
-            foreach (var cart in CartVM.CartsList)
+            foreach (var cart in shoppingCartVM.CartsList)
             {
-                CartVM.OrderHeader.TotalPrice += (cart.Product.Price * cart.Count);
+                shoppingCartVM.OrderHeader.TotalPrice += (cart.Product.Price * cart.Count);
             }
 
-            _unitOfWork.OrderHeader.Add(CartVM.OrderHeader);
+            _unitOfWork.OrderHeader.Add(shoppingCartVM.OrderHeader);
             _unitOfWork.Complete();
 
-            foreach (var cart in CartVM.CartsList)
+            foreach (var cart in shoppingCartVM.CartsList)
             {
                 OrderDetail orderDetail = new OrderDetail()
                 {
                     ProductId = cart.ProductId,
-                    OrderId = CartVM.OrderHeader.Id,
+                    OrderId = shoppingCartVM.OrderHeader.Id,
                     Price = cart.Product.Price,
                     Count = cart.Count
                 };
                 _unitOfWork.OrderDetail.Add(orderDetail);
+                _unitOfWork.Complete();
             }
-            _unitOfWork.Complete();
 
-            var domain = "https://localhost:5199/";
+            var domain = "https://localhost:7081/";
             var options = new SessionCreateOptions
             {
                 LineItems = new List<SessionLineItemOptions>(),
                 Mode = "payment",
-                SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={CartVM.OrderHeader.Id}",
+                SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={shoppingCartVM.OrderHeader.Id}",
                 CancelUrl = domain + "customer/cart/index",
             };
 
-            foreach (var item in CartVM.CartsList)
+            foreach (var item in shoppingCartVM.CartsList)
             {
                 var sessionLineItem = new SessionLineItemOptions
                 {
@@ -162,7 +162,8 @@ namespace Cartify.Web.Areas.Customer.Controllers
             Session session = service.Create(options);
 
             CartVM.OrderHeader.SessionId = session.Id;
-            _unitOfWork.OrderHeader.Update(CartVM.OrderHeader);
+            _unitOfWork.OrderHeader.Update(shoppingCartVM.OrderHeader);
+            CartVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;
             _unitOfWork.Complete();
 
             Response.Headers.Add("Location", session.Url);
@@ -173,7 +174,6 @@ namespace Cartify.Web.Areas.Customer.Controllers
             OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id);
             var service = new SessionService();
             Session session = service.Get(orderHeader.SessionId!);
-            //check the stripe status
             if (session.PaymentStatus.ToLower() == "paid")
             {
                 _unitOfWork.OrderHeader.UpdateStatus(id, SD.Approve, SD.Approve);
