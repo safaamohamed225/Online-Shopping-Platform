@@ -3,16 +3,19 @@ using Cartify.Entities.Repositories;
 using Cartify.Entities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Cartify.Utilities;
+using Microsoft.AspNetCore.Authorization;
+using Stripe;
 
 namespace Cartify.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    //[Authorize(SD.AdminRole)]
     public class OrderController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
 
         [BindProperty]
-        public  OrderVM OrderVM { get; set; }
+        public OrderVM OrderVM { get; set; }
         public OrderController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -25,7 +28,7 @@ namespace Cartify.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetData()
         {
-            IEnumerable<OrderHeader> objOrderHeaders 
+            IEnumerable<OrderHeader> objOrderHeaders
                 = _unitOfWork.OrderHeader.GetAll(includes: "ApplicationUser");
 
             return Json(new { data = objOrderHeaders });
@@ -61,7 +64,7 @@ namespace Cartify.Web.Areas.Admin.Controllers
             var orderHeaderFromDb = _unitOfWork.OrderHeader.Get(
                 u => u.Id == OrderVM.OrderHeader.Id);
             if (orderHeaderFromDb == null)
-                {
+            {
                 return NotFound();
             }
             orderHeaderFromDb.Name = OrderVM.OrderHeader.Name;
@@ -72,11 +75,11 @@ namespace Cartify.Web.Areas.Admin.Controllers
             {
                 orderHeaderFromDb.ShippingDate = OrderVM.OrderHeader.ShippingDate;
             }
-            if(OrderVM.OrderHeader.TrackingNumber != null)
+            if (OrderVM.OrderHeader.TrackingNumber != null)
             {
                 orderHeaderFromDb.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
             }
-            if(OrderVM.OrderHeader.Carrier != null)
+            if (OrderVM.OrderHeader.Carrier != null)
             {
                 orderHeaderFromDb.Carrier = OrderVM.OrderHeader.Carrier;
             }
@@ -111,6 +114,35 @@ namespace Cartify.Web.Areas.Admin.Controllers
             _unitOfWork.Complete();
 
             TempData["Update"] = "Order has Shipped Successfully.";
+            return RedirectToAction("Details", "Order", new { orderid = OrderVM.OrderHeader.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelOrder()
+        {
+            var orderFromDB = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id);
+            if (orderFromDB == null)
+            {
+                return NotFound();
+            }
+            if (orderFromDB.PaymentStatus == SD.Approve)
+            {
+                var options = new RefundCreateOptions
+                {
+                    Reason = RefundReasons.RequestedByCustomer,
+                    PaymentIntent = orderFromDB.PaymentIntentId
+                };
+                var service = new RefundService();
+                Refund refund = service.Create(options);
+                _unitOfWork.OrderHeader.UpdateStatus(orderFromDB.Id, SD.Cancelled, SD.Refund);
+            }
+            else
+            {
+                _unitOfWork.OrderHeader.UpdateStatus(orderFromDB.Id, SD.Cancelled, SD.Rejected);
+            }
+            _unitOfWork.Complete();
+            TempData["Update"] = "Order has Cancelled Successfully.";
             return RedirectToAction("Details", "Order", new { orderid = OrderVM.OrderHeader.Id });
         }
     }
