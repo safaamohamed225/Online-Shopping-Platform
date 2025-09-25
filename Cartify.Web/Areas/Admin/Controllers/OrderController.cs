@@ -93,7 +93,24 @@ namespace Cartify.Web.Areas.Admin.Controllers
             _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.Processing, null);
             _unitOfWork.Complete();
 
-            TempData["Update"] = "Order Status Updated Successfully.";
+            TempData["Update"] = "Order Status has Updated Successfully.";
+            return RedirectToAction("Details", "Order", new { orderid = OrderVM.OrderHeader.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult StartShip()
+        {
+            var orderFromDB = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id);
+            orderFromDB.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
+            orderFromDB.Carrier = OrderVM.OrderHeader.Carrier;
+            orderFromDB.OrderStatus = SD.Shipped;
+            orderFromDB.OrderDate = DateTime.Now;
+
+            _unitOfWork.OrderHeader.Update(orderFromDB);
+            _unitOfWork.Complete();
+
+            TempData["Update"] = "Order has Shipped Successfully.";
             return RedirectToAction("Details", "Order", new { orderid = OrderVM.OrderHeader.Id });
         }
     }
