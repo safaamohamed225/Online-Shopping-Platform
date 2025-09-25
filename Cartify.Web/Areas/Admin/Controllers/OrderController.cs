@@ -2,6 +2,7 @@
 using Cartify.Entities.Repositories;
 using Cartify.Entities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Cartify.Utilities;
 
 namespace Cartify.Web.Areas.Admin.Controllers
 {
@@ -83,6 +84,17 @@ namespace Cartify.Web.Areas.Admin.Controllers
             _unitOfWork.Complete();
             TempData["Update"] = "Order Details Updated Successfully.";
             return RedirectToAction("Details", "Order", new { orderid = orderHeaderFromDb.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult StartProcess()
+        {
+            _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.Processing, null);
+            _unitOfWork.Complete();
+
+            TempData["Update"] = "Order Status Updated Successfully.";
+            return RedirectToAction("Details", "Order", new { orderid = OrderVM.OrderHeader.Id });
         }
     }
 }
