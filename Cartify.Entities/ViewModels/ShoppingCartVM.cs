@@ -13,7 +13,5 @@ namespace Cartify.Entities.ViewModels
         public decimal CartTotal { get; set; }
 
         public OrderHeader OrderHeader { get; set; }
-
-        public decimal DiscountTotal { get; set; } = 0;
     }
 }

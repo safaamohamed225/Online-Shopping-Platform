@@ -1,16 +1,15 @@
-﻿var dataTable;
-
+﻿var dtble;
 $(document).ready(function () {
-
-    LoadDataTable();
+    loaddata();
 });
 
-function LoadDataTable() {
-    dataTable = $('#DT_load').DataTable({
+function loaddata() {
+    dtble = $("#mytable").DataTable({
         "ajax": {
             "url": "/Admin/Order/GetData",
             "type": "GET",
-            "datatype": "json"
+            "datatype": "json",
+            "dataSrc": "data"
         },
         "columns": [
             { "data": "id" },
@@ -18,18 +17,45 @@ function LoadDataTable() {
             { "data": "phoneNumber" },
             { "data": "applicationUser.email" },
             { "data": "orderStatus" },
-            { "data": "totalprice" },
+            { "data": "totalPrice" },
             {
                 "data": "id",
                 "render": function (data) {
                     return `
-                                    <a href = "/Admin/Order/Details?orderid=${data}" class="btn btn-primary btn-sm text-white" style="cursor:pointer;">
-                                        <i class="fas fa-info-circle"></i> Details
-                                        </a>
-                            `;
+                        <a href="/Admin/Order/Details?orderid=${data}" class="btn btn-warning">Details</a>
+                    `;
                 }
             }
         ]
-    })
+    });
 }
 
+
+
+
+//function loaddata() {
+//    dtble = $("#mytable").DataTable({
+//        "ajax": {
+//            "url": "/Admin/Order/GetData"
+//        },
+//        "columns": [
+//            { "data": "id" },
+//            { "data": "name" },
+//            { "data": "phoneNumber" },
+//            { "data": "applicationUser.email" },
+//            { "data": "orderStatus" },
+//            { "data": "totalPrice" },
+//            {
+//                "data": "id",
+//                "render": function (data) {
+//                    return `
+//                            <a href="/Admin/Order/Details?orderid=${data}" class="btn btn-warning">Details</a>
+                            
+//                            `
+//                }
+
+//            }
+
+//        ]
+//    });
+//}

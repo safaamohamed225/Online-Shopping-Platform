@@ -27,17 +27,41 @@ namespace Cartify.Web.Areas.Admin.Controllers
             return Json(new { data = objOrderHeaders });
         }
 
+        //[HttpGet]
+        //public IActionResult Details(int orderid)
+        //{
+        //    OrderVM orderVM = new()
+        //    {
+        //        OrderHeader = _unitOfWork.OrderHeader.Get(
+        //            u => u.Id == orderid, include: "ApplicationUser"),
+        //        OrderDetails = _unitOfWork.OrderDetail.GetAll(
+        //            u => u.OrderHeaderId == orderid, includes: "Product")
+        //    };
+        //    return View(orderVM);   
+        //}
+
         [HttpGet]
         public IActionResult Details(int orderid)
         {
+            var orderHeader = _unitOfWork.OrderHeader.Get(
+                u => u.Id == orderid, include: "ApplicationUser");
+
+            if (orderHeader == null)
+            {
+                return NotFound();
+            }
+
+            var orderDetails = _unitOfWork.OrderDetail.GetAll(
+                u => u.OrderHeaderId == orderid, includes: "Product");
+
             OrderVM orderVM = new()
             {
-                OrderHeader = _unitOfWork.OrderHeader.Get(
-                    u => u.Id == orderid, include: "ApplicationUser"),
-                OrderDetails = _unitOfWork.OrderDetail.GetAll(
-                    u => u.OrderId == orderid, includes: "Product")
+                OrderHeader = orderHeader,
+                OrderDetails = orderDetails
             };
-            return View(orderVM);   
+
+            return View(orderVM);
         }
+
     }
 }

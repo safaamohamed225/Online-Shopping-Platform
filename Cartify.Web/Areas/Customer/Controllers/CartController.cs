@@ -65,94 +65,87 @@ namespace Cartify.Web.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+
         [HttpGet]
         public IActionResult Summary()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity!;
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
             CartVM = new ShoppingCartVM()
             {
-                CartsList = _unitOfWork.ShoppingCart.GetAll(
-                   u => u.ApplicationUserId == claim.Value,
-                   includes: "Product"
-               ),
-                OrderHeader = new OrderHeader()
+                CartsList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value, includes: "Product"),
+                OrderHeader = new()
             };
 
-
-            CartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == claim.Value);
+            CartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(x => x.Id == claim.Value);
 
             CartVM.OrderHeader.Name = CartVM.OrderHeader.ApplicationUser.Name;
-            CartVM.OrderHeader.PhoneNumber = CartVM.OrderHeader.ApplicationUser.PhoneNumber;
             CartVM.OrderHeader.Address = CartVM.OrderHeader.ApplicationUser.Address;
             CartVM.OrderHeader.City = CartVM.OrderHeader.ApplicationUser.City;
-            CartVM.OrderHeader.PostalCode = CartVM.OrderHeader.ApplicationUser.PostalCode;
-            CartVM.OrderHeader.Country = CartVM.OrderHeader.ApplicationUser.Country;
-            foreach (var cart in CartVM.CartsList)
+            CartVM.OrderHeader.PhoneNumber = CartVM.OrderHeader.ApplicationUser.PhoneNumber;
+
+            foreach (var item in CartVM.CartsList)
             {
-                CartVM.OrderHeader.TotalPrice += (cart.Product.Price * cart.Count);
+                CartVM.OrderHeader.TotalPrice += (item.Count * item.Product.Price);
             }
+
             return View(CartVM);
         }
-        [HttpPost("summary")]
+
+        [HttpPost]
+        [ActionName("Summary")]
         [ValidateAntiForgeryToken]
-        public IActionResult PostSummary(ShoppingCartVM shoppingCartVM)
+        public IActionResult POSTSummary(ShoppingCartVM shoppingCartVM)
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity!;
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            shoppingCartVM.CartsList = _unitOfWork.ShoppingCart.GetAll(
-                u => u.ApplicationUserId == claim.Value, includes: "Product");
+            shoppingCartVM.CartsList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value, includes: "Product");
+
 
             shoppingCartVM.OrderHeader.OrderStatus = SD.Pending;
             shoppingCartVM.OrderHeader.PaymentStatus = SD.Pending;
             shoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
             shoppingCartVM.OrderHeader.ApplicationUserId = claim.Value;
 
-            var applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == claim.Value);
 
-            shoppingCartVM.OrderHeader.Name ??= applicationUser.Name;
-            shoppingCartVM.OrderHeader.PhoneNumber ??= applicationUser.PhoneNumber;
-            shoppingCartVM.OrderHeader.Address ??= applicationUser.Address;
-            shoppingCartVM.OrderHeader.City ??= applicationUser.City;
-            shoppingCartVM.OrderHeader.PostalCode ??= applicationUser.PostalCode;
-            shoppingCartVM.OrderHeader.Country ??= applicationUser.Country;
-
-
-            foreach (var cart in shoppingCartVM.CartsList)
+            foreach (var item in shoppingCartVM.CartsList)
             {
-                shoppingCartVM.OrderHeader.TotalPrice += (cart.Product.Price * cart.Count);
+                shoppingCartVM.OrderHeader.TotalPrice += (item.Count * item.Product.Price);
             }
 
             _unitOfWork.OrderHeader.Add(shoppingCartVM.OrderHeader);
             _unitOfWork.Complete();
 
-            foreach (var cart in shoppingCartVM.CartsList)
+            foreach (var item in shoppingCartVM.CartsList)
             {
                 OrderDetail orderDetail = new OrderDetail()
                 {
-                    ProductId = cart.ProductId,
-                    OrderId = shoppingCartVM.OrderHeader.Id,
-                    Price = cart.Product.Price,
-                    Count = cart.Count
+                    ProductId = item.ProductId,
+                    OrderHeaderId = shoppingCartVM.OrderHeader.Id,
+                    Price = item.Product.Price,
+                    Count = item.Count
                 };
-                _unitOfWork.OrderDetail.Add(orderDetail);     
-            }
-            _unitOfWork.Complete();
 
-            var domain = "https://localhost:7081/";
+                _unitOfWork.OrderDetail.Add(orderDetail);
+                _unitOfWork.Complete();
+            }
+
+            var domain = "https://localhost:7020/";
             var options = new SessionCreateOptions
             {
                 LineItems = new List<SessionLineItemOptions>(),
+
                 Mode = "payment",
-                SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={shoppingCartVM.OrderHeader.Id}",
-                CancelUrl = domain + "customer/cart/index",
+                SuccessUrl = domain + $"customer/cart/orderconfirmation?id={shoppingCartVM.OrderHeader.Id}",
+                CancelUrl = domain + $"customer/cart/index",
             };
 
             foreach (var item in shoppingCartVM.CartsList)
             {
-                var sessionLineItem = new SessionLineItemOptions
+                var sessionlineoption = new SessionLineItemOptions
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
@@ -165,44 +158,36 @@ namespace Cartify.Web.Areas.Customer.Controllers
                     },
                     Quantity = item.Count,
                 };
-                options.LineItems.Add(sessionLineItem);
+                options.LineItems.Add(sessionlineoption);
             }
+
 
             var service = new SessionService();
             Session session = service.Create(options);
-
             shoppingCartVM.OrderHeader.SessionId = session.Id;
-            _unitOfWork.OrderHeader.Update(shoppingCartVM.OrderHeader);
-      
+
             _unitOfWork.Complete();
 
             Response.Headers.Add("Location", session.Url);
             return new StatusCodeResult(303);
         }
+
         public IActionResult OrderConfirmation(int id)
         {
-            var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id);
-
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id);
             var service = new SessionService();
-            var session = service.Get(orderHeader.SessionId!);
+            Session session = service.Get(orderHeader.SessionId);
 
-            if (session.PaymentStatus.Equals("paid", StringComparison.OrdinalIgnoreCase))
+            if (session.PaymentStatus.ToLower() == "paid")
             {
-                // Update order status
                 _unitOfWork.OrderHeader.UpdateStatus(id, SD.Approve, SD.Approve);
                 orderHeader.PaymentIntentId = session.PaymentIntentId;
-
-                // Clear shopping cart
-                var shoppingCarts = _unitOfWork.ShoppingCart
-                    .GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId)
-                    .ToList();
-
-                _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
-
-                // Save all changes
                 _unitOfWork.Complete();
             }
-
+            List<ShoppingCart> shoppingcarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            HttpContext.Session.Clear();
+            _unitOfWork.ShoppingCart.RemoveRange(shoppingcarts);
+            _unitOfWork.Complete();
             return View(id);
         }
     }
