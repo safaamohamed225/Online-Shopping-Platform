@@ -4,6 +4,7 @@ using Cartify.Entities.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using X.PagedList.Extensions;
 
 namespace Cartify.Web.Areas.Customer.Controllers
 {
@@ -15,9 +16,12 @@ namespace Cartify.Web.Areas.Customer.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public IActionResult Index()
+        public IActionResult Index(int? page)
         {
-            var productList = _unitOfWork.Product.GetAll();
+            var pageNumber = page ?? 1;
+            int pageSize = 8;
+
+            var productList = _unitOfWork.Product.GetAll().ToPagedList(pageNumber, pageSize);
             return View(productList);
         }
         public IActionResult Details(int id)
