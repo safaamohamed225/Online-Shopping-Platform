@@ -3,6 +3,10 @@
     ViewBag.PageTitle = "Product Management";
     ViewBag.CardTitle = "Product Details";
 }
+@{
+    string plainText = System.Text.RegularExpressions.Regex
+        .Replace(Model.Description ?? "", "<.*?>", string.Empty);
+}
 
 <div>
     <h4>Product</h4>
@@ -23,7 +27,7 @@
                     @Html.DisplayNameFor(model => model.Description)
                 </dt>
                 <dd class="col-sm-8">
-                    @Html.DisplayFor(model => model.Description)
+                    @plainText
                 </dd>
                 <dt class="col-sm-4">
                     @Html.DisplayNameFor(model => model.Price)
