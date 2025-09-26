@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="/css/adminlte.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <link rel="stylesheet" href="//cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css">
+    <script src="https://cdn.tiny.cloud/1/2fwg98q7q3cqkro7x8bvktx4b8u7f21i7wh31i779klg5p3y/tinymce/8/tinymce.min.js" referrerpolicy="origin"></script>
+
 
 
 </head>
@@ -307,7 +309,11 @@
     <script src="//cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <script>
+        tinymce.init({
+          selector: 'textarea',
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>
