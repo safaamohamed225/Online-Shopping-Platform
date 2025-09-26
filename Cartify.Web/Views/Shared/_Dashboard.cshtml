@@ -310,8 +310,11 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        tinymce.init({
-          selector: 'textarea',
+          tinymce.init({
+          selector: '#mytextarea',
+          menubar: false,
+          forced_root_block: false,
+          valid_elements: ''
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

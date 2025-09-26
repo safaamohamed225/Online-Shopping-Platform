@@ -5,6 +5,9 @@
     ViewBag.CardTitle = "Delete Category";
     Layout = "~/Views/Shared/_Dashboard.cshtml";
 }
+@{
+    string plainText = System.Text.RegularExpressions.Regex.Replace(Model.Description ?? "", "<.*?>", string.Empty);
+}
 
 <form asp-action="DeleteConfirmed" method="post">
     <input type="hidden" asp-for="Id" />
@@ -15,7 +18,8 @@
     </div>
     <div class="form-group">
         <label asp-for="Description"></label>
-        <input asp-for="Description" disabled class="form-control" />
+        @* <input asp-for="Description" disabled class="form-control" /> *@
+        <input value="@plainText" disabled class="form-control" />
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-danger">Delete</button>

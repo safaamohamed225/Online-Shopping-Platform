@@ -6,23 +6,31 @@
     ViewBag.CardTitle = "Edit Category";
     Layout = "~/Views/Shared/_Dashboard.cshtml";
 }
-
+<div class="row">
+    <div class="col-md-4">
 <form asp-action="Edit"  method="post">
     <input type="hidden" asp-for="Id" />
     <div class="form-group">
-        <label asp-for="Name"></label>
+                <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Description"></label>
-        <input asp-for="Description" class="form-control" />
+          <label asp-for="Description" class="control-label"></label>
+        <textarea id="mytextarea" asp-for="Description" class="form-control"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
     <a><a asp-action="Index" class="btn btn-secondary" asp-controller="Category">Back to List</a>
 </form>
+</div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        tinymce.init({
+          selector: '#mytextarea'
+        });
+    </script>
 }
