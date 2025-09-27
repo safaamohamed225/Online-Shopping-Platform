@@ -16,6 +16,10 @@ namespace Cartify.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
+            ViewBag.Orders = _unitOfWork.OrderHeader.GetAll().Count();
+            ViewBag.ApprovedOrders = _unitOfWork.OrderHeader.GetAll(o => o.OrderStatus == SD.Approve).Count();
+            ViewBag.Users = _unitOfWork.ApplicationUser.GetAll().Count();
+            ViewBag.Products = _unitOfWork.Product.GetAll().Count();
             return View();
         }
     }

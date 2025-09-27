@@ -4,9 +4,9 @@ $(document).ready(function () {
 });
 
 function loaddata() {
-    dtble = $("#mytable").DataTable({
+    dtble = $("#datatable").DataTable({
         "ajax": {
-            "url": "/Admin/Order/GetData",
+            "url": "/Admin/Order/ApprovedOrders",
             "type": "GET",
             "datatype": "json",
             "dataSrc": "data"

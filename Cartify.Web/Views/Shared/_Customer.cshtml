@@ -44,21 +44,27 @@
                     </li>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">MySetting</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#!">My Orders</a></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" href="#!">Edit My Profile</a></li>
-                            </ul>
-                        </li>
+                        @if (User.IsInRole(SD.AdminRole))
+                        {
+                            <li class="nav-item"><a class="nav-link active" href="/Admin/Dashboard/Index">Dashboard</a></li>
+                        }
+                        else
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">My Setting</a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="#">my Orders</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="/Identity/Account/Manage">Edit Profile</a></li>
+                                </ul>
+                            </li>
+                        }
                     }
                 </ul>
 
                 <partial name="_LoginPartial" />
                 <!-- Cart Button -->
-                @if (User.Identity.IsAuthenticated)
+                @if (User.Identity.IsAuthenticated && !User.IsInRole(SD.AdminRole))
                 {
                     <form class="d-flex">
                         <a href="/Customer/Cart/Index" class="btn btn-outline-dark">

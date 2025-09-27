@@ -34,6 +34,19 @@ namespace Cartify.Web.Areas.Admin.Controllers
             return Json(new { data = objOrderHeaders });
         }
 
+        public IActionResult Approved()
+        {
+            return View();
+        }
+        [HttpGet]
+        public IActionResult ApprovedOrders()
+        {
+            IEnumerable<OrderHeader> objOrderHeaders
+                = _unitOfWork.OrderHeader.GetAll(
+                    u => u.OrderStatus == SD.Approve, includes: "ApplicationUser");
+            return Json(new { data = objOrderHeaders });
+        }
+
         [HttpGet]
         public IActionResult Details(int orderid)
         {
