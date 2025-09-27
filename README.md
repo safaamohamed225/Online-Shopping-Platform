@@ -1,12 +1,38 @@
 # Cartify - Online Shopping Platform
+## 🚀 Tech Stack
+
+### 🔹 Backend
 [![.NET Core](https://img.shields.io/badge/.NET%20Core-8.0-512BD4?style=flat-square&logo=.net)](https://dotnet.microsoft.com/)
-[![Azure](https://img.shields.io/badge/Azure-Deployed-0078D4?style=flat-square&logo=microsoft-azure)](https://azure.microsoft.com/)
-[![MVC](https://img.shields.io/badge/ASP.NET-MVC-5C2D91?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/apps/aspnet/mvc)
-[![Architecture](https://img.shields.io/badge/Architecture-N--Tier-orange?style=flat-square&logo=visualstudio)](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/)
+[![ASP.NET Core MVC](https://img.shields.io/badge/ASP.NET-Core%20MVC-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/apps/aspnet/mvc)
+[![Razor Pages](https://img.shields.io/badge/Razor-Pages-5C2D91?style=flat-square&logo=razor)](https://learn.microsoft.com/en-us/aspnet/core/razor-pages)
 [![Entity Framework Core](https://img.shields.io/badge/Entity%20Framework-Core-512BD4?style=flat-square&logo=nuget)](https://learn.microsoft.com/en-us/ef/core/)
+[![LINQ](https://img.shields.io/badge/LINQ-Query-blue?style=flat-square&logo=dotnet)](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/)
 [![SQL Server](https://img.shields.io/badge/SQL%20Server-Database-CC2927?style=flat-square&logo=microsoft-sql-server)](https://www.microsoft.com/en-us/sql-server)
-[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+
+### 🔹 Design Patterns & Architecture
+[![Architecture](https://img.shields.io/badge/Architecture-N--Tier-orange?style=flat-square&logo=visualstudio)](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/)
+[![Repository Pattern](https://img.shields.io/badge/Repository-Pattern-orange?style=flat-square&logo=github)](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design)
+[![Unit of Work](https://img.shields.io/badge/Unit%20of%20Work-Pattern-lightgrey?style=flat-square&logo=dotnet)](https://martinfowler.com/eaaCatalog/unitOfWork.html)
+[![Dependency Injection](https://img.shields.io/badge/Dependency-Injection-6DB33F?style=flat-square&logo=dependabot)](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection)
+
+### 🔹 Security
+[![Authentication](https://img.shields.io/badge/User-Authentication-yellow?style=flat-square&logo=auth0)](https://learn.microsoft.com/en-us/aspnet/core/security/authentication)
+[![Authorization](https://img.shields.io/badge/Role%20Based-Authorization-yellowgreen?style=flat-square&logo=lock)](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles)
+[![Stripe API](https://img.shields.io/badge/Stripe-API-626CD9?style=flat-square&logo=stripe)](https://stripe.com/)
+
+### 🔹 Frontend
+[![HTML5](https://img.shields.io/badge/HTML5-Frontend-E34F26?style=flat-square&logo=html5)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-Frontend-1572B6?style=flat-square&logo=css3)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-Framework-563D7C?style=flat-square&logo=bootstrap)](https://getbootstrap.com/)
+[![jQuery](https://img.shields.io/badge/jQuery-Library-0769AD?style=flat-square&logo=jquery)](https://jquery.com/)
+
+### 🔹 Cloud & Tools
+[![Microsoft Azure](https://img.shields.io/badge/Microsoft-Azure%20Cloud-0078D4?style=flat-square&logo=microsoft-azure)](https://azure.microsoft.com/)
+[![Azure](https://img.shields.io/badge/Azure-Deployed-0078D4?style=flat-square&logo=microsoft-azure)](https://azure.microsoft.com/)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square)](https://github.com/yourusername/cartify)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+
+
 
 <img width="1536" height="1024" alt="dc661631-0f68-401e-baa3-620e7592836e" src="https://github.com/user-attachments/assets/d9a6673d-865d-4558-8e8c-26ef5d65f8ce" />
 
@@ -39,15 +65,6 @@
 - Inventory management system
 - Order tracking and management
 - User management with role-based access control
-
-## 🛠️ Tech Stack
-
-**Backend:** ASP.NET Core MVC, Razor Pages, Entity Framework, LINQ, SQL Server  
-**Frontend:** HTML5, CSS3, Bootstrap, jQuery  
-**Architecture:** Repository Pattern, Unit of Work, Dependency Injection  
-**Authentication:** Role-based Authorization System  
-**Payment:** Stripe API Integration  
-**Cloud:** Microsoft Azure
 
 ## 🏗️ Architecture
 
