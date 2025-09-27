@@ -1,4 +1,5 @@
-﻿using Cartify.Entities.Models;
+﻿using Cartify.DataAccess.Implementations;
+using Cartify.Entities.Models;
 using Cartify.Entities.Repositories;
 using Cartify.Entities.ViewModels;
 using Cartify.Utilities;
@@ -46,33 +47,39 @@ namespace Cartify.Web.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public IActionResult Details(AddToCartVM vm)
+        public IActionResult Details(ShoppingCart shoppingCart)
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity!;
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            shoppingCart.ApplicationUserId = claim.Value;
 
-            ShoppingCart cartObj = _unitOfWork.ShoppingCart.Get(
-                c => c.ApplicationUserId == claim.Value && c.ProductId == vm.ProductId);
+        
+            shoppingCart.Id = 0;
 
-            if(cartObj != null)
+            ShoppingCart Cartobj = _unitOfWork.ShoppingCart.Get(
+                u => u.ApplicationUserId == claim.Value && u.ProductId == shoppingCart.ProductId);
+
+            if (Cartobj == null)
             {
-                _unitOfWork.ShoppingCart.IncreseCount(cartObj, vm.Count);
+              
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.Complete();
+
+            
+                int count = _unitOfWork.ShoppingCart
+                                .GetAll(x => x.ApplicationUserId == claim.Value)
+                                .ToList()
+                                .Count();
+                HttpContext.Session.SetInt32(SD.SessionKey, count);
             }
             else
             {
-                ShoppingCart cart = new ShoppingCart()
-                {
-                    ProductId = vm.ProductId,
-                    Count = vm.Count,
-                    ApplicationUserId = claim.Value
-                };
-                _unitOfWork.ShoppingCart.Add(cart);
-                HttpContext.Session.SetInt32(SD.SessionKey,
-                    _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claim.Value).ToList().Count);
+          
+                _unitOfWork.ShoppingCart.IncreseCount(Cartobj, shoppingCart.Count);
+                _unitOfWork.Complete();
             }
-            _unitOfWork.Complete();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 }

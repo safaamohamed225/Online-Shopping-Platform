@@ -39,7 +39,7 @@
 
                                     <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
                                         <p><strong>@item.Product.Name</strong></p>
-                                        <p>@item.Product.Description</p>
+                                        <p>@Html.Raw(item.Product.Description)</p>
                                         <a type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm me-1 mb-2" data-mdb-tooltip-init
                                            title="Remove item" asp-action="Remove" asp-route-cartid="@item.Id">
                                             <i class="fas fa-trash"></i>

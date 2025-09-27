@@ -45,13 +45,16 @@ namespace Cartify.Web.Areas.Customer.Controllers
         public IActionResult Minus(int cartId)
         {
             var cart = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
-            if(cart.Count <= 1)
+            if (cart.Count <= 1)
             {
                 _unitOfWork.ShoppingCart.Remove(cart);
+                var count = _unitOfWork.ShoppingCart.GetAll(x => x.ApplicationUserId == cart.ApplicationUserId).ToList().Count() - 1;
+                HttpContext.Session.SetInt32(SD.SessionKey, count);
             }
             else
             {
                 _unitOfWork.ShoppingCart.DecreaseCount(cart, 1);
+
             }
             _unitOfWork.Complete();
             return RedirectToAction(nameof(Index));
@@ -62,6 +65,8 @@ namespace Cartify.Web.Areas.Customer.Controllers
             var cart = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
             _unitOfWork.ShoppingCart.Remove(cart);
             _unitOfWork.Complete();
+            var count = _unitOfWork.ShoppingCart.GetAll(x => x.ApplicationUserId == cart.ApplicationUserId).ToList().Count();
+            HttpContext.Session.SetInt32(SD.SessionKey, count);
             return RedirectToAction(nameof(Index));
         }
 
@@ -133,7 +138,7 @@ namespace Cartify.Web.Areas.Customer.Controllers
                 _unitOfWork.Complete();
             }
 
-            var domain = "https://localhost:7020/";
+            var domain = "https://localhost:7081/";
             var options = new SessionCreateOptions
             {
                 LineItems = new List<SessionLineItemOptions>(),
