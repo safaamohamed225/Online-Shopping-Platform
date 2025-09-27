@@ -1,6 +1,7 @@
 ﻿using Cartify.Entities.Models;
 using Cartify.Entities.Repositories;
 using Cartify.Entities.ViewModels;
+using Cartify.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -65,7 +66,9 @@ namespace Cartify.Web.Areas.Customer.Controllers
                     Count = vm.Count,
                     ApplicationUserId = claim.Value
                 };
-                _unitOfWork.ShoppingCart.Add(cart);    
+                _unitOfWork.ShoppingCart.Add(cart);
+                HttpContext.Session.SetInt32(SD.SessionKey,
+                    _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claim.Value).ToList().Count);
             }
             _unitOfWork.Complete();
 
