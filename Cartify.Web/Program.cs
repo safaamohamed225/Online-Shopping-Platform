@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Cartify.Utilities;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Stripe;
+using Cartify.Entities.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
     ));
 builder.Services.Configure<StripeData>(builder.Configuration.GetSection("Stripe"));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options=>options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(3))
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=>options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(3))
     .AddDefaultTokenProviders()
     .AddDefaultUI()
     .AddEntityFrameworkStores<ApplicationDbContext>();
