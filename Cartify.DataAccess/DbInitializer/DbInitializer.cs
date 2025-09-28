@@ -1,6 +1,8 @@
 ﻿using Cartify.DataAccess.Data;
 using Cartify.Entities.Models;
+using Cartify.Utilities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,9 +26,47 @@ namespace Cartify.DataAccess.DbInitializer
             _roleManager = roleManager;
             _context = context;
         }
-        public void Initialize()
+        public async Task InitializeAsync()
         {
-            
+            //Migration
+            try
+            {
+                if(_context.Database.GetPendingMigrations().Count() > 0)
+                {
+                    _context.Database.Migrate();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            //Roles
+
+            if (!await _roleManager.RoleExistsAsync(SD.AdminRole))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(SD.AdminRole));
+                await _roleManager.CreateAsync(new IdentityRole(SD.EditorRole));
+                await _roleManager.CreateAsync(new IdentityRole(SD.CustomerRole));
+
+
+                //Users
+                await _userManager.CreateAsync(new ApplicationUser
+                {
+                    UserName = "AdminShopping",
+                    Email = "admin@shopping.com",
+                    PhoneNumber = "1112223333",
+                    Name = "Administrator",
+                    City = "New York",
+                    Address = "123 Admin St"
+                }, "Admin@password123");
+
+                ApplicationUser user = await _context.ApplicationUsers
+                    .FirstOrDefaultAsync(u => u.Email == "admin@shopping.com");
+
+                await _userManager.AddToRoleAsync(user!, SD.AdminRole);
+            }
+          return;
         }
     }
 }

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cartify.Entities\Cartify.Entities.csproj" />
+    <ProjectReference Include="..\Cartify.Utilities\Cartify.Utilities.csproj" />
   </ItemGroup>
 
 </Project>
