@@ -79,12 +79,12 @@ namespace Cartify.Web.Areas.Identity.Pages.Account
         }
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if(! await _roleManager.RoleExistsAsync(SD.AdminRole))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(SD.AdminRole));
-                await _roleManager.CreateAsync(new IdentityRole(SD.EditorRole));
-                await _roleManager.CreateAsync(new IdentityRole(SD.CustomerRole));
-            }  
+            //if(! await _roleManager.RoleExistsAsync(SD.AdminRole))
+            //{
+            //    await _roleManager.CreateAsync(new IdentityRole(SD.AdminRole));
+            //    await _roleManager.CreateAsync(new IdentityRole(SD.EditorRole));
+            //    await _roleManager.CreateAsync(new IdentityRole(SD.CustomerRole));
+            //}  
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
