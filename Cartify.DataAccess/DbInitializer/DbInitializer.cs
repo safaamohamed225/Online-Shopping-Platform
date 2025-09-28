@@ -2,6 +2,7 @@
 using Cartify.Entities.Models;
 using Cartify.Utilities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -28,10 +29,10 @@ namespace Cartify.DataAccess.DbInitializer
         }
         public async Task InitializeAsync()
         {
-            //Migration
+            // Apply migrations if needed
             try
             {
-                if(_context.Database.GetPendingMigrations().Count() > 0)
+                if (_context.Database.GetPendingMigrations().Any())
                 {
                     _context.Database.Migrate();
                 }
@@ -40,33 +41,29 @@ namespace Cartify.DataAccess.DbInitializer
             {
                 throw;
             }
-
-            //Roles
-
             if (!await _roleManager.RoleExistsAsync(SD.AdminRole))
             {
                 await _roleManager.CreateAsync(new IdentityRole(SD.AdminRole));
                 await _roleManager.CreateAsync(new IdentityRole(SD.EditorRole));
                 await _roleManager.CreateAsync(new IdentityRole(SD.CustomerRole));
 
-
-                //Users
                 await _userManager.CreateAsync(new ApplicationUser
                 {
-                    UserName = "AdminShopping",
-                    Email = "admin@shopping.com",
+
+                    UserName = "admin@cartify.com",
+                    Email = "admin@cartify.com",
+                    EmailConfirmed = true,
                     PhoneNumber = "1112223333",
-                    Name = "Administrator",
+                    Name = "Admin",
                     City = "New York",
                     Address = "123 Admin St"
-                }, "Admin@password123");
+                }, "Pa$word@123");
 
-                ApplicationUser user = await _context.ApplicationUsers
-                    .FirstOrDefaultAsync(u => u.Email == "admin@shopping.com");
-
-                await _userManager.AddToRoleAsync(user!, SD.AdminRole);
+                ApplicationUser user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Email == "admin@cartify.com");
+                await _userManager.AddToRoleAsync(user, SD.AdminRole);
             }
-          return;
+            return;
         }
+       
     }
 }

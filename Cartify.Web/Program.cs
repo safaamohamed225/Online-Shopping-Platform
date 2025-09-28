@@ -7,6 +7,7 @@ using Cartify.Utilities;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Stripe;
 using Cartify.Entities.Models;
+using Cartify.DataAccess.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=>options.Loc
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddRazorPages();
 
 builder.Services.AddDistributedMemoryCache();
@@ -44,6 +46,12 @@ app.UseStaticFiles();
 
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 app.UseRouting();
+// Seed the database and roles
+using (var scope = app.Services.CreateScope())
+{
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    await dbInitializer.InitializeAsync(); 
+}
 app.UseAuthentication();
 
 app.UseAuthorization();
