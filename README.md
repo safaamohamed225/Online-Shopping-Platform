@@ -40,9 +40,6 @@
 **Scalable E-commerce Platform with N-Tier Architecture**
 
 **Cartify** is a modern, full-featured e-commerce web application built with **ASP.NET Core**, designed to provide a seamless online shopping experience. The platform supports a wide range of products including electronics, clothing, and more, with a focus on performance, scalability, and user experience.
-# 🚀 Live Demo
-
-🌐 **[View Live Application](https://cartify-demo.azurewebsites.net)**
 
 
 ## 🚀 Features
