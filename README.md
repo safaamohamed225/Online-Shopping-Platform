@@ -164,9 +164,9 @@ dotnet test
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 ## 👤 Author
 
-- Safaa Muhammad  
-  - [GitHub](https://github.com/safaamohamed225)  
-  - [LinkedIn](https://www.linkedin.com/in/safa-mohamed-dotnet/)  
+**Developer**: SAFAA MUHAMMAD  
+**Email**: [Send Me](mailto:safaa.mohamed.ibrahem@gmail.com)  
+**LinkedIn**: [My LinkedIn Profile](https://www.linkedin.com/in/safaa-muhammad-dotnet/)  
 ## 🙏 Acknowledgments
 This project was developed individually with the support of amazing open-source tools and frameworks:
 
